@@ -1,0 +1,38 @@
+{
+  "Username": "Nom d'utilisateur",
+  "Password": "Mot de passe",
+  "Register": "S'inscrire",
+  "Registering": "Inscription",
+  "Login": "Connexion",
+  "Welcome back!": "Bon retour parmi nous !",
+  "Invalid credentials": "Identifiants invalides",
+  "Please fill all fields": "Veuillez remplir tous les champs",
+  "Server error": "Erreur du serveur",
+  "Account created successfully!": "Compte créé avec succès !",
+  "No account yet?": "Pas encore de compte ?",
+  "Sign up": "Inscris-toi",
+  "Already have an account?": "Déjà un compte ?",
+  "Login instead": "Connecte-toi",
+  "Welcome": "Bienvenue",
+  "Logout": "Déconnexion",
+  "Navbar": {
+    "dashboard": "Tableau de bord",
+    "nutrition": "Nutrition",
+    "workout": "Entraînement",
+    "log": "Historique",
+    "tools": "Outils",
+    "profile": "Profil"
+  },
+  "Dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue dans ton espace astronaute !"
+  },
+  "Tools": {
+    "title": "Outils d'entraînement",
+    "timer": "Chronomètre",
+    "prCalculator": "Calculateur de PR",
+    "barbellCalculator": "Calculateur de barre",
+    "exerciseLibrary": "Bibliothèque d'exercices",
+    "comingSoon": "Bientôt disponible..."
+  }
+}

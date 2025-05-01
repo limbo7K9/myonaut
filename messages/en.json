@@ -1,0 +1,38 @@
+{
+  "Username": "Username",
+  "Password": "Password",
+  "Register": "Register",
+  "Registering": "Registering",
+  "Login": "Login",
+  "Welcome back!": "Welcome back!",
+  "Invalid credentials": "Invalid credentials",
+  "Please fill all fields": "Please fill all fields",
+  "Server error": "Server error",
+  "Account created successfully!": "Account created successfully!",
+  "No account yet?": "No account yet?",
+  "Sign up": "Sign up",
+  "Already have an account?": "Already have an account?",
+  "Login instead": "Login instead",
+  "Welcome": "Welcome",
+  "Logout": "Logout",
+  "Navbar": {
+    "dashboard": "Dashboard",
+    "nutrition": "Nutrition",
+    "workout": "Workout",
+    "log": "Log",
+    "tools": "Tools",
+    "profile": "Profile"
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to your space astronaut!"
+  },
+  "Tools": {
+    "title": "Training Tools",
+    "timer": "Timer",
+    "prCalculator": "PR Calculator",
+    "barbellCalculator": "Barbell Calculator",
+    "exerciseLibrary": "Exercise Library",
+    "comingSoon": "Coming soon..."
+  }
+}
