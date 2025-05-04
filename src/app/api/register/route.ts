@@ -2,26 +2,70 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
+interface RegisterBody {
+  firstname: string;
+  lastname: string;
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phone?: string;
+  birthdate: string;
+  gender: string;
+  weight: string;
+  height: string;
+}
+
 export async function POST(req: Request) {
-  const { username, password } = await req.json();
-
-  if (!username || !password) {
-    return NextResponse.json({ message: 'Champs manquants' }, { status: 400 });
-  }
-
-  const existingUser = await prisma.user.findUnique({ where: { username } });
-  if (existingUser) {
-    return NextResponse.json({ message: 'Utilisateur déjà existant' }, { status: 409 });
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  await prisma.user.create({
-    data: {
+  try {
+    const body: RegisterBody = await req.json();
+    const {
+      firstname,
+      lastname,
       username,
-      password: hashedPassword,
-    },
-  });
+      email,
+      password,
+      confirmPassword,
+      phone,
+      birthdate,
+      gender,
+      weight,
+      height,
+    } = body;
 
-  return NextResponse.json({ message: 'Compte créé avec succès' }, { status: 201 });
+    if (!username || !password || !confirmPassword || !email || !firstname || !lastname || !birthdate || !gender || !weight || !height) {
+      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+    }
+
+    if (password !== confirmPassword) {
+      return NextResponse.json({ message: 'Passwords do not match' }, { status: 400 });
+    }
+
+    const existingUser = await prisma.user.findUnique({ where: { username } });
+    if (existingUser) {
+      return NextResponse.json({ message: 'Username already taken' }, { status: 400 });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword,
+        firstname,
+        lastname,
+        phone: phone || null,
+        birthdate: new Date(birthdate),
+        gender,
+        weight: parseFloat(weight),
+        height: parseFloat(height),
+      },
+    });
+
+    return NextResponse.json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: 'Server error' }, { status: 500 });
+  }
 }

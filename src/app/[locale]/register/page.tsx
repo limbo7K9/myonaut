@@ -1,101 +1,90 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 
 export default function RegisterPage() {
+  const t = useTranslations('Register');
   const router = useRouter();
-  const t = useTranslations();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Attraper les autofill quand la page est chargée
-  useEffect(() => {
-    const usernameInput = document.getElementById('username') as HTMLInputElement | null;
-    const passwordInput = document.getElementById('password') as HTMLInputElement | null;
+  const [formData, setFormData] = useState({
+    firstname: '',
+    lastname: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
+    birthdate: '',
+    gender: '',
+    weight: '',
+    height: '',
+  });
 
-    if (usernameInput?.value) {
-      setUsername(usernameInput.value);
-    }
-    if (passwordInput?.value) {
-      setPassword(passwordInput.value);
-    }
-  }, []);
+  const updateField = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!username || !password) {
-      toast.error(t('Please fill all fields'));
-      return;
-    }
-
+  const handleSubmit = async () => {
+    setError('');
     setLoading(true);
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    setLoading(false);
 
-    try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-
+    if (res.ok) {
+      router.push('/login');
+    } else {
       const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.message || t('An error occurred'));
-      } else {
-        toast.success(t('Account created successfully!'));
-        router.push('/login');
-      }
-    } catch (err) {
-      toast.error(t('Server error'));
-    } finally {
-      setLoading(false);
+      setError(data.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md mx-auto mt-10" autoComplete="on">
-      <input
-        id="username"
-        name="username"
-        type="text"
-        placeholder={t('Username')}
-        defaultValue={username}
-        onChange={(e) => setUsername(e.target.value)}
-        className="p-2 border rounded"
-        autoComplete="username"
-      />
-      <input
-        id="password"
-        name="password"
-        type="password"
-        placeholder={t('Password')}
-        defaultValue={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="p-2 border rounded"
-        autoComplete="current-password"
-      />
-      <button
-        type="submit"
-        className="bg-green-600 text-white p-2 rounded disabled:opacity-50 flex items-center justify-center gap-2"
-        disabled={loading}
-      >
-        {loading ? (
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-        ) : (
-          t('Register')
-        )}
-      </button>
+    <div className="max-w-lg mx-auto mt-10 p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-lg">
+      {step === 1 && (
+        <div className="flex flex-col gap-4">
+          <input placeholder="First name" value={formData.firstname} onChange={e => updateField('firstname', e.target.value)} className="input" />
+          <input placeholder="Last name" value={formData.lastname} onChange={e => updateField('lastname', e.target.value)} className="input" />
+          <input placeholder="Username" value={formData.username} onChange={e => updateField('username', e.target.value)} className="input" />
+          <input type="email" placeholder="Email" value={formData.email} onChange={e => updateField('email', e.target.value)} className="input" />
+          <input type="password" placeholder="Password" value={formData.password} onChange={e => updateField('password', e.target.value)} className="input" />
+          <input type="password" placeholder="Confirm Password" value={formData.confirmPassword} onChange={e => updateField('confirmPassword', e.target.value)} className="input" />
+          <input placeholder="Phone (optional)" value={formData.phone} onChange={e => updateField('phone', e.target.value)} className="input" />
+        </div>
+      )}
 
-      <p className="text-center text-sm mt-4">
-        {t('Already have an account?')} <a href="/login" className="text-blue-500 hover:underline">{t('Login')}</a>
-      </p>
-      
-    </form>
+      {step === 2 && (
+        <div className="flex flex-col gap-4">
+          <input type="date" placeholder="Birthdate" value={formData.birthdate} onChange={e => updateField('birthdate', e.target.value)} className="input" />
+          <select value={formData.gender} onChange={e => updateField('gender', e.target.value)} className="input">
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+          <input type="number" placeholder="Weight (kg)" value={formData.weight} onChange={e => updateField('weight', e.target.value)} className="input" />
+          <input type="number" placeholder="Height (cm)" value={formData.height} onChange={e => updateField('height', e.target.value)} className="input" />
+        </div>
+      )}
+
+      {/* Future: Step 3 - email/phone verification */}
+
+      <div className="flex justify-between mt-6">
+        {step > 1 && <button onClick={() => setStep(step - 1)} className="text-white hover:underline">Back</button>}
+        {step < 2 && <button onClick={() => setStep(step + 1)} className="text-white hover:underline">Next</button>}
+        {step === 2 && <button onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded" disabled={loading}>{loading ? 'Registering...' : 'Register'}</button>}
+      </div>
+
+      {error && <p className="text-red-500 mt-4">{error}</p>}
+    </div>
   );
 }

@@ -1,18 +1,7 @@
-'use client';
+import { getLocale } from 'next-intl/server';
+import { redirect } from 'next/navigation';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/login');
-  }, [router]);
-
-  return (
-    <div className="flex justify-center items-center min-h-screen">
-      <p>Redirection vers la page de connexion...</p>
-    </div>
-  );
+export default async function RootPage() {
+  const locale = await getLocale();
+  redirect(`/${locale}/login`);
 }
